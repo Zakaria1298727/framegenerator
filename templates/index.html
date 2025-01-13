@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethernet Frame Generator</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ethernet Frame Generator</h1>
+    <button id="generateBtn">Generate Frame</button>
+    <h2>Generated Frames</h2>
+    <table id="framesTable">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Source</th>
+                <th>Destination</th>
+                <th>Protocol</th>
+                <th>Length</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Les trames générées seront ajoutées ici -->
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            fetch('/generate')
+                .then(response => response.json())
+                .then(data => {
+                    // Ajouter la nouvelle trame au tableau
+                    const tableBody = document.querySelector('#framesTable tbody');
+                    const newRow = tableBody.insertRow();
+                    newRow.innerHTML = `
+                        <td>${data.Time.toFixed(2)}</td>
+                        <td>${data.Source}</td>
+                        <td>${data.Destination}</td>
+                        <td>${data.Protocol}</td>
+                        <td>${data.Length.toFixed(2)}</td>
+                    `;
+                });
+        });
+
+        // Charger les trames existantes au chargement de la page
+        fetch('/frames')
+            .then(response => response.json())
+            .then(frames => {
+                const tableBody = document.querySelector('#framesTable tbody');
+                frames.forEach(frame => {
+                    const newRow = tableBody.insertRow();
+                    newRow.innerHTML = `
+                        <td>${frame.Time.toFixed(2)}</td>
+                        <td>${frame.Source}</td>
+                        <td>${frame.Destination}</td>
+                        <td>${frame.Protocol}</td>
+                        <td>${frame.Length.toFixed(2)}</td>
+                    `;
+                });
+            });
+    </script>
+</body>
+</html>
